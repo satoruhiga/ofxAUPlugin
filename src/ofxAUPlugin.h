@@ -58,4 +58,6 @@ public:
 	void setParamValue(int paramID, float value);
 
 	void process(const float *input, float *output);
+	
+	void bypass(bool yn);
 };

@@ -359,3 +359,9 @@ void ofxAUPlugin::setParamValue(int paramID, float value)
 		value,
 		0);
 }
+
+void ofxAUPlugin::bypass(bool yn)
+{
+	if (processor->AU().CanBypass())
+		processor->AU().SetBypass(yn);
+}
