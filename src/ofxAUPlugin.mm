@@ -175,7 +175,7 @@ void ofxAUPlugin::initParameter()
 		info.minValue = paramInfo.minValue;
 		info.maxValue = paramInfo.maxValue;
 
-		paramsInfo.push_back(info);
+		paramsInfo[paramInfo.name] = info;
 	}
 }
 
@@ -315,49 +315,49 @@ void ofxAUPlugin::process(const float *input, float *output)
 	}
 }
 
-void ofxAUPlugin::dumpParamNames()
+void ofxAUPlugin::listParamInfo()
 {
-	for (int i = 0; i < paramsInfo.size(); i++)
+	map<string, ParamInfo>::iterator it = paramsInfo.begin();
+	
+	while (it != paramsInfo.end())
 	{
-		const ParamInfo &param = paramsInfo[i];
-		cout << "#" << i << ": " << param.name << " [" << param.minValue << " ~ " << param.maxValue << "]" << endl;
+		const ParamInfo &param = (*it).second;
+		cout << "#" << param.paramID << ": " << param.name << " [" << param.minValue << " ~ " << param.maxValue << "]" << endl;		
+		it++;
 	}
 }
 
-float ofxAUPlugin::getParamValue(int paramID)
+float ofxAUPlugin::getParam(const string& name)
 {
-	assert(paramID >= 0 && paramID < paramsInfo.size());
-
+	if (paramsInfo.find(name) == paramsInfo.end()) return 0;
+	
 	float result;
-	ParamInfo &info = paramsInfo[paramID];
-
+	ParamInfo &info = paramsInfo[name];
+	
 	AudioUnitGetParameter(processor->AU().AU(),
-		info.paramID,
-		kAudioUnitScope_Global,
-		0,
-		&result);
-
+						  info.paramID,
+						  kAudioUnitScope_Global,
+						  0,
+						  &result);
+	
 	return result;
 }
 
-void ofxAUPlugin::setParamValue(int paramID, float value)
+void ofxAUPlugin::setParam(const string& name, float value)
 {
-	assert(paramID >= 0 && paramID < paramsInfo.size());
-
-	ParamInfo &info = paramsInfo[paramID];
+	if (paramsInfo.find(name) == paramsInfo.end()) return;
+	
+	ParamInfo &info = paramsInfo[name];
 	CAAudioUnit &au = processor->AU();
-
-	if (info.minValue > value)
-		value = info.minValue;
-	else if (info.maxValue < value)
-		value = info.maxValue;
-
+	
+	value = ofClamp(value, info.minValue, info.maxValue);
+	
 	AudioUnitSetParameter(au.AU(),
-		info.paramID,
-		kAudioUnitScope_Global,
-		0,
-		value,
-		0);
+						  info.paramID,
+						  kAudioUnitScope_Global,
+						  0,
+						  value,
+						  0);
 }
 
 void ofxAUPlugin::bypass(bool yn)

@@ -6,8 +6,8 @@
 
 class ofxAUPlugin
 {
-public:
-
+protected:
+	
 	struct ParamInfo
 	{
 		int paramID;
@@ -15,8 +15,6 @@ public:
 		float minValue, maxValue;
 	};
 	
-private:
-
 	static vector<CAComponent *> components;
 	static bool inited;
 	static int sampleRate, bufferSize;
@@ -34,7 +32,7 @@ private:
 	void initProcessor(CAComponent comp);
 	void initParameter();
 
-	vector<ParamInfo> paramsInfo;
+	map<string, ParamInfo> paramsInfo;
 
 public:
 
@@ -50,12 +48,10 @@ public:
 	const int numInput() const { return numInputCh; }
 	const int numOutput() const { return numOutputCh; }
 	
-	void dumpParamNames();
-
-	vector<ParamInfo> getParamsInfo() { return paramsInfo; }
-
-	float getParamValue(int paramID);
-	void setParamValue(int paramID, float value);
+	void listParamInfo();
+	
+	float getParam(const string& name);
+	void setParam(const string& name, float value);
 
 	void process(const float *input, float *output);
 	

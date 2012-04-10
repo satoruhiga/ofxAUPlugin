@@ -66,7 +66,7 @@ void testApp::setup(){
 	//
 	
 	delay.loadPreset("delay.aupreset");
-	
+
 	
 	//
 	// or plugin name
@@ -87,6 +87,24 @@ void testApp::setup(){
 	//
 	
 	ofSoundStreamSetup(2, 0, this, samplerate, buffersize, 4);
+	
+	
+	//
+	// List prams info
+	//
+	
+	delay.listParamInfo();
+	/*
+	 you'll get like....
+	 
+	 #0: dry/wet mix [0 ~ 100]
+	 #1: delay time [0.0001 ~ 2]
+	 #2: feedback [-99.9 ~ 99.9]
+	 #3: lowpass cutoff frequency [10 ~ 22050]
+	 */
+	
+	// so, set feedback param
+	delay.setParam("feedback", 99);
 }
 
 //--------------------------------------------------------------
@@ -111,12 +129,12 @@ void testApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
-
+	delay.setParam("delay time", ofMap(x, 0, ofGetWidth(), 0.0001, 2, true));
 }
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
-
+	
 }
 
 //--------------------------------------------------------------
